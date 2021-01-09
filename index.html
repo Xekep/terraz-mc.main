@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en" >
+   <head>
+      <meta charset="UTF-8">
+      <title>CodePen - Pixel Smear</title>
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+      <style>
+         html, body {
+         height: 100%;
+         background: black;
+         }
+         canvas {
+         display: block;
+         width: auto;
+         height: auto;
+         min-width: 100%;
+         min-height: 100%;
+         position: absolute;
+         top: 50%;
+         left: 50%;
+         transform: translate(-50%, -50%) scale(1.025);
+         -ms-interpolation-mode: nearest-neighbor;
+         image-rendering: -moz-crisp-edges;
+         image-rendering: pixelated;
+         }
+         img {
+         height: auto;
+         position: absolute;
+         z-index: 9;
+         visibility: hidden;
+         top: 10px;
+         left: 50%;
+         top: 50%;
+         transform: translate(-50%, -50%);
+         border-radius: 4px;
+         box-shadow: 0px 0px 24px rgba(0, 0, 0, 0.3);
+         }
+      </style>
+   </head>
+   <body>
+      <img src="https://sun9-31.userapi.com/impg/q0ZoAXPgXlFm70zWIeglCnoGS0qCWyqPdvGN2A/ZqzacRWqU8Q.jpg?size=1280x720&quality=96&sign=1a40dc1f2971ff6ba7233559daf750b4&type=album" crossorigin="anonymous">
+      <canvas></canvas>
+      <script>
+         console.clear();
+         
+         const cvs = document.querySelector('canvas'),
+         ctx = cvs.getContext('2d'),
+         img = document.querySelector('img');
+         
+         if (img.complete) processImage(img);else
+         img.onload = () => {processImage(img);};
+         
+         function processImage(img) {
+           let w = img.width,
+           h = img.height;
+           img.style.width = '260px';
+           cvs.width = w;
+           cvs.height = h;
+           ctx.drawImage(img, 0, 0);
+           let px = w * h,
+           data = ctx.getImageData(0, 0, w, h),
+           len = data.data.length,
+           rate = 0.01;
+         
+           animate();
+         
+           function animate() {
+             requestAnimationFrame(animate);
+             let relLen = Math.floor(len / 4);
+             for (let i = len - 5; i > 0; i -= 4) {
+               let relI = i * 0.25,
+               y = Math.floor(relI / w),
+               x = Math.random() > 0.1 ? relI + 1 : relI;
+               x = x % w + w * y;
+               x *= 4;
+               data.data[x] = data.data[i];
+               data.data[x + 1] = data.data[i + 1];
+               data.data[x + 2] = data.data[i + 2];
+               data.data[x + 3] = data.data[i + 3];
+             }
+             ctx.putImageData(data, 0, 0);
+           }
+         }
+      </script>
+   </body>
+</html>
