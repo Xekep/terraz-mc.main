@@ -93,7 +93,7 @@
       <script>
          $( document ).ready(function() {
             $('#bgvid').on('ended', function () {
-               this.load();
+               this.currentTime = 0;
                this.play();
             });
          });
